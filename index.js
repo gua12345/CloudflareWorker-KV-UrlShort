@@ -1,5 +1,6 @@
 // Cloudflare Worker
 // This worker uses Cloudflare KV for storing URL data
+const ADMIN_PASSWORD = "password"; // 管理路径密码
 
 addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
@@ -15,8 +16,8 @@ async function handleRequest(request) {
       return new Response(null, { status: 204 });
     }
 
-    if (pathname === "/") {
-      // Serve the frontend
+    if (pathname === `/${ADMIN_PASSWORD}`) {  // 使用模板字符串正确拼接路径
+    // Serve the frontend
       return serveFrontend();
     }
 
@@ -293,6 +294,7 @@ async function serveFrontend() {
     },
   });
 }
+
 
 async function handleAPIRequest(request) {
   try {
