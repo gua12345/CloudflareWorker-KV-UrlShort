@@ -603,7 +603,14 @@ async function handleRedirect(pathname) {
       });
     }
 
-    return cfredirect(url);
+    return cfredirect(url)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return new Response("处理请求时发生错误", { status: 500 });
+        });
+    
   } catch (error) {
     console.error('Redirect Error:', error);
     return new Response("服务器内部错误", { 
@@ -613,7 +620,7 @@ async function handleRedirect(pathname) {
   }
 }
 
-function cfredirect(url){
+async function cfredirect(url) {
     if (url) {
         try {
             const response = await fetch(url, { redirect: "manual" });
