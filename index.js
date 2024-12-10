@@ -603,7 +603,7 @@ async function handleRedirect(pathname) {
       });
     }
 
-    return Response.redirect(url, 302);
+    return cfredirect(url);
   } catch (error) {
     console.error('Redirect Error:', error);
     return new Response("服务器内部错误", { 
@@ -612,6 +612,26 @@ async function handleRedirect(pathname) {
     });
   }
 }
+
+function cfredirect(url){
+    if (url) {
+        try {
+            const response = await fetch(url, { redirect: "manual" });
+            if (response.ok) {
+                const newResponse = new Response(response.body, response);
+                newResponse.headers.set("Content-Type", "text/plain; charset=utf-8");
+                return newResponse;
+            } else {
+                return new Response("Error fetching content from Gist", { status: 502 });
+            }
+        } catch (error) {
+            return new Response("Error fetching content from Gist", { status: 502 });
+        }
+    } else {
+        return new Response("Unauthorized: Incorrect password or path not found", { status: 401 });
+    }
+}
+
 
 function generateSlug(length = 6) {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
