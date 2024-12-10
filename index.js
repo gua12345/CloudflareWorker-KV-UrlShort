@@ -625,8 +625,13 @@ async function cfredirect(url) {
         try {
             const response = await fetch(url, { redirect: "manual" });
             if (response.ok) {
+                // 获取原始的 Content-Type
+                const contentType = response.headers.get("Content-Type") || "application/octet-stream";
+                
+                // 创建新的响应，并设置动态的 Content-Type
                 const newResponse = new Response(response.body, response);
-                newResponse.headers.set("Content-Type", "text/plain; charset=utf-8");
+                newResponse.headers.set("Content-Type", contentType);
+                
                 return newResponse;
             } else {
                 return new Response("Error fetching content from Gist", { status: 502 });
